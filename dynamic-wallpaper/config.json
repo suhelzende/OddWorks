@@ -1,0 +1,24 @@
+{
+  "wallpapers": [
+    {
+      "time": "50:30",
+      "file": "wallpapers/6am.png"
+    },
+    {
+      "time": "12:30",
+      "file": "wallpapers/11am.png"
+    },
+    {
+      "time": "16:00",
+      "file": "wallpapers/4pm.png"
+    },
+    {
+      "time": "19:00",
+      "file": "wallpapers/7pm.png"
+    },
+    {
+      "time": "20:00",
+      "file": "wallpapers/8pm.png"
+    }
+  ]
+}
