@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"time"
 	"unsafe"
 
@@ -44,17 +45,27 @@ func main() {
 			fmt.Println("Failed to load config:", err)
 			return
 		}
-		now := time.Now()
+		now := time.Now().Format("15:04")
 
-		for _, wallpaper := range config.Wallpapers {
-			// fmt.Printf("\nChecking Time(%s) and Wallpaper (%s , %s)", now.Format("15:04"), wallpaper.Time, wallpaper.File)
-			if now.Format("15:04") == wallpaper.Time && last_wallpaper != wallpaper.File {
-				if err := setWallpaper(wallpaper.File); err != nil {
-					fmt.Println("Failed to set wallpaper:", err)
-				} else {
-					last_wallpaper = wallpaper.File
-					fmt.Println("Wallpaper changed:", wallpaper.File)
-				}
+		// if no match found then it definitely next day so get last from today, so defaulting to last index
+		wallpaperIndex := len(config.Wallpapers) - 1
+
+		// Find last closest time
+		for index, wallpaper := range config.Wallpapers {
+			if now >= wallpaper.Time {
+				wallpaperIndex = index
+			} else {
+				break
+			}
+		}
+
+		wallpaper := config.Wallpapers[wallpaperIndex]
+		if last_wallpaper != wallpaper.File {
+			if err := setWallpaper(wallpaper.File); err != nil {
+				fmt.Println("Failed to set wallpaper:", err)
+			} else {
+				last_wallpaper = wallpaper.File
+				fmt.Println("Wallpaper changed:", wallpaper.File)
 			}
 		}
 
@@ -74,6 +85,9 @@ func loadConfig() (Config, error) {
 		return Config{}, err
 	}
 
+	sort.Slice(config.Wallpapers, func(i, j int) bool {
+		return config.Wallpapers[i].Time < config.Wallpapers[j].Time
+	})
 	return config, nil
 }
 
